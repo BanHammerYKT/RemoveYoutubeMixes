@@ -1,13 +1,14 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
+// @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
+// @updateURL    https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
 // @match        https://www.youtube.com/
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
-// @require      https://code.jquery.com/jquery-3.2.1.min.js
+// @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
 // @grant        none
 // ==/UserScript==
 
@@ -22,7 +23,7 @@
             const isChannel = channelName.has("a").length > 0;
             if (!isChannel) {
                 // channelName.text("this is a mix!!!");
-                $(el).attr("is-dismissed", true);
+                $(el).attr("is-dismissed", "");
                 // console.log(gridMedia);
                 //channelName.remove();
             }
