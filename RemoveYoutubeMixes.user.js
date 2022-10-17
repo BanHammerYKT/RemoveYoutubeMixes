@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.3
+// @version      0.4
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -15,9 +15,13 @@
 (function () {
     "use strict";
 
-    console.log("loaded");
+    function log(s) {
+        console.log(`RemoveYoutubeMixes ${s}`);
+    }
 
-    function searchAll() {
+    log("loaded");
+
+    function searchMixes() {
         $("ytd-rich-grid-media").each(function (index, el) {
             const channelName = $(el).find("yt-formatted-string#text");
             const isChannel = channelName.has("a").length > 0;
@@ -32,8 +36,9 @@
         });
     }
 
-    function setupTimeout() {
-        setInterval(searchAll, 2000);
+    function setupTimer() {
+        log("setupTimer");
+        setInterval(searchMixes, 2000);
     }
 
     if (
@@ -41,10 +46,10 @@
         document.readyState == "loaded" ||
         document.readyState == "interactive"
     ) {
-        setupTimeout();
+        setupTimer();
     } else {
         document.addEventListener("DOMContentLoaded", function (event) {
-            setupTimeout();
+            setupTimer();
         });
     }
 })();
