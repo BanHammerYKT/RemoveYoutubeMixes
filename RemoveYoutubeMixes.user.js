@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.4
+// @version      0.5
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -22,12 +22,10 @@
     log("loaded");
 
     function searchMixes() {
-        $("ytd-rich-grid-media").each(function (index, el) {
+        $("ytd-rich-grid-media:not([is-dismissed])").each(function (index, el) {
             const channelName = $(el).find("yt-formatted-string#text");
             const isChannel = channelName.has("a").length > 0;
-            const isDismissedAttr = $(el).attr("is-dismissed");
-            const isDismissed = typeof isDismissedAttr !== "undefined";
-            if (!isChannel && !isDismissed) {
+            if (!isChannel) {
                 // channelName.text("this is a mix!!!");
                 $(el).attr("is-dismissed", "");
                 // console.log(gridMedia);
