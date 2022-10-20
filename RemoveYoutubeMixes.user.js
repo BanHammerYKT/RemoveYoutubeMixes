@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.6
+// @version      0.7
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -32,6 +32,12 @@
                 //channelName.remove();
             }
         });
+        $("ytd-compact-radio-renderer.use-ellipsis:not([is-dismissed])").each(
+            function (index, el) {
+                $(el).hide();
+                $(el).attr("is-dismissed", "");
+            }
+        );
     }
 
     function setupTimer() {
