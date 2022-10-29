@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.7
+// @version      0.8
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -22,22 +22,29 @@
     log("loaded");
 
     function searchMixes() {
-        $("ytd-rich-grid-media:not([is-dismissed])").each(function (index, el) {
-            const channelName = $(el).find("yt-formatted-string#text");
-            const isChannel = channelName.has("a").length > 0;
-            if (!isChannel) {
-                // channelName.text("this is a mix!!!");
-                $(el).attr("is-dismissed", "");
-                // console.log(gridMedia);
-                //channelName.remove();
-            }
-        });
-        $("ytd-compact-radio-renderer.use-ellipsis:not([is-dismissed])").each(
-            function (index, el) {
+        var primaryContents = $("div#primary").find("div#contents");
+        var secondaryContents = $("div#secondary").find("div#contents");
+
+        if (!document.URL.endsWith("/videos")) {
+            primaryContents
+                .find("ytd-rich-grid-media:not([is-dismissed])")
+                .each(function (index, el) {
+                    const channelName = $(el).find("yt-formatted-string#text");
+                    const isChannel = channelName.has("a").length > 0;
+                    if (!isChannel) {
+                        // channelName.text("this is a mix!!!");
+                        $(el).attr("is-dismissed", "");
+                        // console.log(gridMedia);
+                        //channelName.remove();
+                    }
+                });
+        }
+        secondaryContents
+            .find("ytd-compact-radio-renderer.use-ellipsis:not([is-dismissed])")
+            .each(function (index, el) {
                 $(el).hide();
                 $(el).attr("is-dismissed", "");
-            }
-        );
+            });
     }
 
     function setupTimer() {
