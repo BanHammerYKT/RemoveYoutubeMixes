@@ -11,45 +11,53 @@
 // @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
 // @grant        none
 // ==/UserScript==
+
 (function () {
     "use strict";
-    function log(s) {
+
+    function log(s: any) {
         console.log(`RemoveYoutubeMixes ${s}`);
     }
+
     log("loaded");
+
     function searchMixes() {
         var primaryContents = $("div#primary").find("div#contents");
         var secondaryContents = $("div#secondary").find("div#contents");
+
         if (!document.URL.endsWith("/videos")) {
             primaryContents
                 .find("ytd-rich-grid-media:not([is-dismissed])")
                 .each(function (index, el) {
-                const channelName = $(el).find("yt-formatted-string#text");
-                const isChannel = channelName.has("a").length > 0;
-                if (!isChannel) {
-                    // channelName.text("this is a mix!!!");
-                    $(el).attr("is-dismissed", "");
-                    // console.log(gridMedia);
-                    //channelName.remove();
-                }
-            });
+                    const channelName = $(el).find("yt-formatted-string#text");
+                    const isChannel = channelName.has("a").length > 0;
+                    if (!isChannel) {
+                        // channelName.text("this is a mix!!!");
+                        $(el).attr("is-dismissed", "");
+                        // console.log(gridMedia);
+                        //channelName.remove();
+                    }
+                });
         }
         secondaryContents
             .find("ytd-compact-radio-renderer.use-ellipsis:not([is-dismissed])")
             .each(function (index, el) {
-            $(el).hide();
-            $(el).attr("is-dismissed", "");
-        });
+                $(el).hide();
+                $(el).attr("is-dismissed", "");
+            });
     }
+
     function setupTimer() {
         log("setupTimer");
         setInterval(searchMixes, 2000);
     }
-    if (document.readyState == "complete" ||
-        document.readyState == "interactive") {
+
+    if (
+        document.readyState == "complete" ||
+        document.readyState == "interactive"
+    ) {
         setupTimer();
-    }
-    else {
+    } else {
         document.addEventListener("DOMContentLoaded", function (event) {
             setupTimer();
         });
