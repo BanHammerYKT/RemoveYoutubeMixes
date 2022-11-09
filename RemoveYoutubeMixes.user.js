@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.9
+// @version      0.10
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -15,18 +15,32 @@
 (function () {
     "use strict";
 
+    let channelPages = [
+        "featured",
+        "videos",
+        "streams",
+        "playlists",
+        "community",
+        "channels",
+        "about",
+    ];
+
     function log(s) {
         console.log(`RemoveYoutubeMixes ${s}`);
     }
 
     log("loaded");
 
+    function isChannelPage() {
+        let urlLastWord = document.URL.split("/").pop();
+        return channelPages.indexOf(urlLastWord) > -1;
+    }
+
     function searchMixes() {
         var primaryContents = $("div#primary").find("div#contents");
         var secondaryContents = $("div#secondary").find("div#contents");
-        let isChannelPage = url.endsWith("/videos") || url.endsWith("/streams");
 
-        if (!isChannelPage) {
+        if (!isChannelPage()) {
             primaryContents
                 .find("ytd-rich-grid-media:not([is-dismissed])")
                 .each(function (index, el) {
