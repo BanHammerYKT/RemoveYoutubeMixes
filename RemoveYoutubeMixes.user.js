@@ -15,26 +15,43 @@
 (function () {
     "use strict";
 
+    let channelPages = [
+        "featured",
+        "videos",
+        "streams",
+        "playlists",
+        "community",
+        "channels",
+        "about",
+    ];
+
     function log(s) {
         console.log(`RemoveYoutubeMixes ${s}`);
     }
 
     log("loaded");
 
-    var contents = {};
-    var interval = 0;
+    function isChannelPage() {
+        let urlLastWord = document.URL.split("/").pop();
+        return channelPages.indexOf(urlLastWord) > -1;
+    }
 
     function searchPrimaryMixes() {
-        $("ytd-rich-grid-media:not([is-dismissed])").each(function (index, el) {
-            const channelName = $(el).find("yt-formatted-string#text");
-            const isChannel = channelName.has("a").length > 0;
-            if (!isChannel) {
-                // channelName.text("this is a mix!!!");
-                $(el).attr("is-dismissed", "");
-                // console.log(gridMedia);
-                //channelName.remove();
-            }
-        });
+        if (!isChannelPage()) {
+            $("ytd-rich-grid-media:not([is-dismissed])").each(function (
+                index,
+                el
+            ) {
+                const channelName = $(el).find("yt-formatted-string#text");
+                const isChannel = channelName.has("a").length > 0;
+                if (!isChannel) {
+                    // channelName.text("this is a mix!!!");
+                    $(el).attr("is-dismissed", "");
+                    // console.log(gridMedia);
+                    //channelName.remove();
+                }
+            });
+        }
     }
 
     function searchSecondaryMixes() {
@@ -46,47 +63,31 @@
         );
     }
 
-    const primaryCallback = function (mutationsList, observer) {
+    const callback = function (mutationsList, observer) {
         console.log("Changes Detected");
         searchPrimaryMixes();
-    };
-
-    const secondaryCallback = function (mutationsList, observer) {
-        console.log("Changes Detected");
         searchSecondaryMixes();
     };
+
     const config = {
         childList: true,
-        // characterData: true,
         subtree: true,
-        // attributes: true,
     };
-    const primaryObserver = new MutationObserver(primaryCallback);
-    const secondaryObserver = new MutationObserver(secondaryCallback);
+    const observer = new MutationObserver(callback);
 
     function searchContents() {
-        var primaryContents = $("div#primary")[0];
-        var secondaryContents = $("div#secondary")[0];
-        console.log(primaryContents);
-        console.log(secondaryContents);
-        //log(JSON.stringify(targetNode));
-        if (primaryContents != undefined && secondaryContents != undefined) {
-            log("searchContents found");
-            clearInterval(interval);
-            primaryObserver.observe(
-                $(primaryContents).find("div#contents")[0],
-                config
-            );
-            secondaryObserver.observe(
-                $(secondaryContents).find("div#contents")[0],
-                config
-            );
-        }
+        observer.disconnect();
+        $("div#primary").each(function (index, el) {
+            observer.observe(el, config);
+        });
+        $("div#secondary").each(function (index, el) {
+            observer.observe(el, config);
+        });
     }
 
     function setupTimer(source) {
         log(`setupTimer ${source}`);
-        interval = setInterval(searchContents, 500);
+        setInterval(searchContents, 2000);
     }
 
     if (
