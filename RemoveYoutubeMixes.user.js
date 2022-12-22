@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.10
+// @version      0.11
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -36,35 +36,58 @@
         return channelPages.indexOf(urlLastWord) > -1;
     }
 
-    function searchMixes() {
-        var primaryContents = $("div#primary").find("div#contents");
-        var secondaryContents = $("div#secondary").find("div#contents");
-
+    function searchPrimaryMixes() {
         if (!isChannelPage()) {
-            primaryContents
-                .find("ytd-rich-grid-media:not([is-dismissed])")
-                .each(function (index, el) {
-                    const channelName = $(el).find("yt-formatted-string#text");
-                    const isChannel = channelName.has("a").length > 0;
-                    if (!isChannel) {
-                        // channelName.text("this is a mix!!!");
-                        $(el).attr("is-dismissed", "");
-                        // console.log(gridMedia);
-                        //channelName.remove();
-                    }
-                });
-        }
-        secondaryContents
-            .find("ytd-compact-radio-renderer.use-ellipsis:not([is-dismissed])")
-            .each(function (index, el) {
-                $(el).hide();
-                $(el).attr("is-dismissed", "");
+            $("ytd-rich-grid-media:not([is-dismissed])").each(function (
+                index,
+                el
+            ) {
+                const channelName = $(el).find("yt-formatted-string#text");
+                const isChannel = channelName.has("a").length > 0;
+                if (!isChannel) {
+                    // channelName.text("this is a mix!!!");
+                    $(el).attr("is-dismissed", "");
+                    // console.log(gridMedia);
+                    //channelName.remove();
+                }
             });
+        }
     }
 
-    function setupTimer() {
-        log("setupTimer");
-        setInterval(searchMixes, 2000);
+    function searchSecondaryMixes() {
+        $("ytd-compact-radio-renderer.use-ellipsis:not([is-dismissed])").each(
+            function (index, el) {
+                $(el).hide();
+                $(el).attr("is-dismissed", "");
+            }
+        );
+    }
+
+    const callback = function (mutationsList, observer) {
+        // console.log("Changes Detected");
+        searchPrimaryMixes();
+        searchSecondaryMixes();
+    };
+
+    const config = {
+        childList: true,
+        subtree: true,
+    };
+    const observer = new MutationObserver(callback);
+
+    function searchContents() {
+        observer.disconnect();
+        $("div#primary").each(function (index, el) {
+            observer.observe(el, config);
+        });
+        $("div#secondary").each(function (index, el) {
+            observer.observe(el, config);
+        });
+    }
+
+    function setupTimer(source) {
+        log(`setupTimer ${source}`);
+        setInterval(searchContents, 2000);
     }
 
     if (
@@ -72,10 +95,10 @@
         document.readyState == "loaded" ||
         document.readyState == "interactive"
     ) {
-        setupTimer();
+        setupTimer(`readyState ${document.readyState}`);
     } else {
         document.addEventListener("DOMContentLoaded", function (event) {
-            setupTimer();
+            setupTimer("DOMContentLoaded");
         });
     }
 })();
