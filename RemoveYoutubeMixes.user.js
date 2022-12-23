@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.13
+// @version      0.14
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -79,10 +79,26 @@
         );
     }
 
+    function searchPrimaryShorts() {
+        $(
+            "ytd-grid-renderer>div#items>ytd-grid-video-renderer:not([is-dismissed])"
+        ).each(function (index, el) {
+            let shortIcon = $(el).find(
+                "ytd-thumbnail-overlay-time-status-renderer"
+            );
+            let isShort = shortIcon.attr("overlay-style") === "SHORTS";
+            if (isShort) {
+                // $(el).hide();
+                $(el).attr("is-dismissed", "");
+            }
+        });
+    }
+
     function searchAll(from) {
         searchPrimaryMixes();
         searchSecondaryMixes();
         searchShortsPanel(from);
+        searchPrimaryShorts();
     }
 
     const observer = new MutationObserver(function (mutationsList, observer) {
