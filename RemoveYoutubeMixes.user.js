@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.12
+// @version      0.13
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -67,13 +67,16 @@
     }
 
     function searchShortsPanel(from) {
-        $("div#contents>ytd-rich-section-renderer").each(function (index, el) {
-            let shortsSpan = $(el).find("span:contains('Shorts')")[0];
-            if (shortsSpan != undefined) {
-                // log("searchShortsPanel " + from);
-                $(el).remove();
+        $("div#contents>ytd-rich-section-renderer:not([is-dismissed])").each(
+            function (index, el) {
+                let shortsSpan = $(el).find("span:contains('Shorts')")[0];
+                if (shortsSpan != undefined) {
+                    // log("searchShortsPanel " + from);
+                    $(el).hide();
+                    $(el).attr("is-dismissed", "");
+                }
             }
-        });
+        );
     }
 
     function searchAll(from) {
