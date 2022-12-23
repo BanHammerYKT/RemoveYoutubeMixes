@@ -1,7 +1,7 @@
 /* globals jQuery, $, waitForKeyElements */
 // ==UserScript==
 // @name         Remove YouTube Mixes
-// @version      0.11
+// @version      0.12
 // @description  Try to remove YouTube Mixes
 // @author       BanHammerYKT
 // @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
@@ -24,6 +24,9 @@
         "channels",
         "about",
     ];
+    let searchCounter = 0;
+    let searchInterval = 0;
+    const searchTimes = 40;
 
     function log(s) {
         console.log(`RemoveYoutubeMixes ${s}`);
@@ -63,19 +66,31 @@
         );
     }
 
-    const callback = function (mutationsList, observer) {
-        // console.log("Changes Detected");
+    function searchShortsPanel(from) {
+        $("div#contents>ytd-rich-section-renderer").each(function (index, el) {
+            let shortsSpan = $(el).find("span:contains('Shorts')")[0];
+            if (shortsSpan != undefined) {
+                // log("searchShortsPanel " + from);
+                $(el).remove();
+            }
+        });
+    }
+
+    function searchAll(from) {
         searchPrimaryMixes();
         searchSecondaryMixes();
-    };
+        searchShortsPanel(from);
+    }
 
-    const config = {
-        childList: true,
-        subtree: true,
-    };
-    const observer = new MutationObserver(callback);
+    const observer = new MutationObserver(function (mutationsList, observer) {
+        searchAll("callback");
+    });
 
-    function searchContents() {
+    function setupObserver() {
+        const config = {
+            childList: true,
+            subtree: true,
+        };
         observer.disconnect();
         $("div#primary").each(function (index, el) {
             observer.observe(el, config);
@@ -85,9 +100,19 @@
         });
     }
 
+    function searchLoading() {
+        if (searchCounter >= searchTimes) {
+            clearInterval(searchInterval);
+            // log("searchLoading stopped");
+        }
+        searchAll("searchLoading");
+        searchCounter++;
+    }
+
     function setupTimer(source) {
         log(`setupTimer ${source}`);
-        setInterval(searchContents, 2000);
+        setInterval(setupObserver, 2000);
+        searchInterval = setInterval(searchLoading, 200);
     }
 
     if (
