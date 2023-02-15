@@ -1,19 +1,8 @@
-/* globals jQuery, $, waitForKeyElements */
-// ==UserScript==
-// @name         Remove YouTube Mixes
-// @version      0.18
-// @description  Try to remove YouTube Mixes
-// @author       BanHammerYKT
-// @downloadURL  https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
-// @updateURL    https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js
-// @match        https://www.youtube.com/*
-// @icon         https://www.google.com/s2/favicons?sz=64&domain=youtube.com
-// @require      https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js
-// @grant        none
-// ==/UserScript==
+import "./_header_";
+import { Logger } from "./logger";
 
 (function () {
-    "use strict";
+    ("use strict");
 
     let channelPages = ["featured", "videos", "streams", "playlists", "community", "channels", "about"];
     let searchCounter = 0;
@@ -25,14 +14,10 @@
         '<img height="14px" src="https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/icons/mix.svg"><span style="font-size: 1.2rem">&nbsp;&nbsp;&nbsp;&nbsp;mix was here)</span>';
     const dismissedContentStyle = "display: flex;justify-content: center;align-items: center;color: gray;";
 
-    function log(s: any) {
-        console.log(`RemoveYoutubeMixes ${s}`);
-    }
-
-    log("loaded");
+    Logger.debug("loaded");
 
     function isChannelPage() {
-        let urlLastWord = document.URL.split("/").pop() as string;
+        let urlLastWord = document.URL.split("/").pop();
         return channelPages.indexOf(urlLastWord) > -1;
     }
 
@@ -59,7 +44,7 @@
         });
     }
 
-    function searchShortsPanel(from: string) {
+    function searchShortsPanel(from) {
         $("div#contents>ytd-rich-section-renderer:not([is-dismissed])").each(function (index, el) {
             const shortsSpan = $(el).find("span:contains('Shorts')")[0];
             if (shortsSpan != undefined) {
@@ -82,7 +67,7 @@
         });
     }
 
-    function searchAll(from: string) {
+    function searchAll(from) {
         searchPrimaryMixes();
         searchSecondaryMixes();
         searchShortsPanel(from);
@@ -116,8 +101,8 @@
         searchCounter++;
     }
 
-    function setupTimer(source: string) {
-        log(`setupTimer ${source}`);
+    function setupTimer(source) {
+        Logger.debug(`setupTimer ${source}`);
         setInterval(setupObserver, 2000);
         searchInterval = setInterval(searchLoading, 200);
     }

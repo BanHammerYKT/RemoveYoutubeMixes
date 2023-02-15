@@ -1,10 +1,31 @@
 {
   "name": "remove_youtube_mixes",
-  "version": "1.0.0",
+  "version": "0.19",
   "description": "",
-  "main": "RemoveYoutubeMixes.user.js",
   "scripts": {
-    "build": "tsc"
+    "build": "userscript-builder --mode dev",
+    "release:bugfix": "userscript-builder --mode bugfix",
+    "release:minor": "userscript-builder --mode minor",
+    "release:major": "userscript-builder --mode major"
+  },
+  "userscript": {
+    "entry": "./src/main.js",
+    "dev": "./dist",
+    "release": "./",
+    "fileName": "RemoveYoutubeMixes",
+    "meta": {
+      "name": "Remove YouTube Mixes",
+      "description": "Try to remove YouTube Mixes",
+      "author": "BanHammerYKT",
+      "match": "https://www.youtube.com/*",
+      "grant": "none",
+      "downloadURL": "https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js",
+      "updateURL": "https://github.com/BanHammerYKT/RemoveYoutubeMixes/raw/master/RemoveYoutubeMixes.user.js",
+      "icon": "https://www.google.com/s2/favicons?sz=64&domain=youtube.com",
+      "require": [
+        "https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"
+      ]
+    }
   },
   "repository": {
     "type": "git",
@@ -18,7 +39,6 @@
   },
   "homepage": "https://github.com/BanHammerYKT/RemoveYoutubeMixes#readme",
   "devDependencies": {
-    "@types/jquery": "^3.5.14",
-    "typescript": "^4.8.4"
+    "userscript-builder": "^0.4.0"
   }
 }
